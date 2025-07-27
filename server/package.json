@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "bun --watch run src/index.ts",
+    "mimi": "bun run src/cli/mimi.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.12.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "hono": "^4.7.11",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.12.0",
+    "react-router": "^7.7.1",
+    "shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
