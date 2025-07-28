@@ -1,6 +1,6 @@
 # RABV 🚀
 
-![cover](https://cdn.stevedylan.dev/ipfs/bafybeievx27ar5qfqyqyud7kemnb5n2p4rzt2matogi6qttwkpxonqhra4)
+![cover](https://ibb.co/svr0NZTx)
 
 Une stack full-stack TypeScript moderne avec authentification JWT, utilisant **R**eact, **A**donisJS, **B**un et **V**ite.
 
