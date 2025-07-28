@@ -2,13 +2,13 @@
 
 ![cover](https://cdn.stevedylan.dev/ipfs/bafybeievx27ar5qfqyqyud7kemnb5n2p4rzt2matogi6qttwkpxonqhra4)
 
-Une stack full-stack TypeScript moderne avec authentification JWT, utilisant Bun, Hono, Vite, React et Prisma.
+Une stack full-stack TypeScript moderne avec authentification JWT, utilisant Bun, AdonisJS, Vite et React.
 
 ## ✨ Fonctionnalités
 
 - **🔐 Authentification JWT complète** avec hashage des mots de passe
 - **🛡️ Routes protégées** avec middleware Bearer Auth
-- **📊 Base de données** avec Prisma ORM et MySQL
+- **📊 Base de données** avec AdonisJS Lucid ORM et MySQL
 - **🎨 Interface moderne** avec Framer Motion et Tailwind CSS
 - **🔄 État global** avec Redux Toolkit
 - **📱 Responsive Design** avec animations fluides
@@ -19,9 +19,9 @@ Une stack full-stack TypeScript moderne avec authentification JWT, utilisant Bun
 ```
 TemplateNextGen/
 ├── client/               # React frontend avec Redux
-├── server/               # Hono backend avec JWT
+├── server/               # AdonisJS backend avec JWT
 ├── shared/               # Types TypeScript partagés
-└── prisma/               # Schéma de base de données
+└── database/             # Migrations et seeders AdonisJS
 ```
 
 ## 🚀 Démarrage rapide
@@ -45,11 +45,11 @@ cd server
 cp .env.example .env
 # Éditer .env avec vos paramètres de base de données
 
-# Générer le client Prisma
-bun prisma generate
-
 # Appliquer les migrations
-bun prisma db push
+bun ace migration:run
+
+# Exécuter les seeders (optionnel)
+bun ace db:seed
 ```
 
 ### Développement
@@ -60,25 +60,25 @@ bun run dev
 
 # Ou individuellement
 bun run dev:client    # Frontend React (port 5173)
-bun run dev:server    # Backend Hono (port 3000)
+bun run dev:server    # Backend AdonisJS (port 3333)
 ```
 
 ## 🔐 API Authentication
 
 ### Créer un compte
 ```bash
-curl -X POST http://localhost:3000/api/auth/register \
+curl -X POST http://localhost:3333/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
-    "name": "John Doe",
+    "fullName": "John Doe",
     "password": "password123"
   }'
 ```
 
 ### Se connecter
 ```bash
-curl -X POST http://localhost:3000/api/auth/login \
+curl -X POST http://localhost:3333/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -89,11 +89,11 @@ curl -X POST http://localhost:3000/api/auth/login \
 ### Routes protégées
 ```bash
 # Récupérer le profil (nécessite un token)
-curl -X GET http://localhost:3000/api/auth/profile \
+curl -X GET http://localhost:3333/api/auth/profile \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 
 # Créer un post (nécessite un token)
-curl -X POST http://localhost:3000/api/posts \
+curl -X POST http://localhost:3333/api/posts \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -122,39 +122,42 @@ client/src/
 
 ### Backend (server/)
 ```
-server/src/
+server/app/
 ├── controllers/
-│   ├── AuthController.ts  # Authentification JWT
-│   └── PostController.ts  # Gestion des posts
+│   └── auth_controller.ts  # Authentification JWT
 ├── middleware/
-│   └── auth.ts           # Middleware JWT
-├── routes.ts             # Configuration des routes
-└── index.ts              # Point d'entrée
+│   └── auth_middleware.ts  # Middleware JWT
+├── models/
+│   └── user.ts            # Modèle User avec Lucid
+├── validators/
+│   └── auth.ts            # Validation des données
+└── start/
+    └── routes.ts          # Configuration des routes
 ```
 
-### Base de données (prisma/)
-```sql
--- Modèle User
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  password  String   -- Hashé avec bcrypt
-  posts     Post[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+### Base de données (AdonisJS Lucid)
+```typescript
+// Modèle User (app/models/user.ts)
+export default class User extends compose(BaseModel, AuthFinder) {
+  @column({ isPrimary: true })
+  declare id: number
 
--- Modèle Post
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  Int
-  author    User     @relation(fields: [authorId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @column()
+  declare fullName: string | null
+
+  @column()
+  declare email: string
+
+  @column({ serializeAs: null })
+  declare password: string
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+
+  static accessTokens = DbAccessTokensProvider.forModel(User)
 }
 ```
 
