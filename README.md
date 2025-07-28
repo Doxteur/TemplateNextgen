@@ -1,8 +1,8 @@
-# BHVR 🚀
+# RABV 🚀
 
 ![cover](https://cdn.stevedylan.dev/ipfs/bafybeievx27ar5qfqyqyud7kemnb5n2p4rzt2matogi6qttwkpxonqhra4)
 
-Une stack full-stack TypeScript moderne avec authentification JWT, utilisant Bun, AdonisJS, Vite et React.
+Une stack full-stack TypeScript moderne avec authentification JWT, utilisant **R**eact, **A**donisJS, **B**un et **V**ite.
 
 ## ✨ Fonctionnalités
 
@@ -17,7 +17,7 @@ Une stack full-stack TypeScript moderne avec authentification JWT, utilisant Bun
 ## 🏗️ Architecture
 
 ```
-TemplateNextGen/
+RABV/
 ├── client/               # React frontend avec Redux
 ├── server/               # AdonisJS backend avec JWT
 ├── shared/               # Types TypeScript partagés
@@ -35,7 +35,7 @@ TemplateNextGen/
 ```bash
 # Cloner le projet
 git clone <votre-repo>
-cd TemplateNextGen
+cd RABV
 
 # Installer les dépendances
 bun install
@@ -164,7 +164,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
 ## 🛡️ Sécurité
 
 - **JWT Tokens** : Expiration de 24h
-- **Hashage des mots de passe** : bcrypt avec salt rounds de 10
+- **Hashage des mots de passe** : Bcrypt avec configuration sécurisée
 - **Routes protégées** : Middleware Bearer Auth automatique
 - **Autorisation** : Vérification de propriété pour les opérations CRUD
 - **Validation** : Vérification des données d'entrée
@@ -189,11 +189,11 @@ export default class User extends compose(BaseModel, AuthFinder) {
 - **shadcn/ui** pour les composants
 
 ### Backend
-- **Hono** framework web
-- **Prisma** ORM
+- **AdonisJS** framework web
+- **Lucid ORM** pour la base de données
 - **MySQL** base de données
 - **JWT** authentification
-- **bcrypt** hashage des mots de passe
+- **Bcrypt** hashage des mots de passe
 
 ### Outils
 - **Bun** runtime et package manager
@@ -253,7 +253,7 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 ## 🙏 Remerciements
 
-- [Hono](https://hono.dev) pour le framework backend
+- [AdonisJS](https://adonisjs.com) pour le framework backend
 - [shadcn/ui](https://ui.shadcn.com) pour les composants UI
 - [Framer Motion](https://www.framer.com/motion/) pour les animations
-- [Prisma](https://www.prisma.io) pour l'ORM
+- [Lucid ORM](https://docs.adonisjs.com/guides/models/introduction) pour l'ORM
