@@ -1,0 +1,39 @@
+services:
+  # Service API (AdonisJS) - Staging
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: template-nextgen-api-staging
+    ports:
+      - "3334:3333"
+    env_file:
+      - ./server/.env.staging
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - staging-network
+    environment:
+      - NODE_ENV=staging
+      - LOG_LEVEL=debug
+
+  # Reverse Proxy (Nginx) avec fichiers statiques - Staging
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    container_name: template-nextgen-nginx-staging
+    ports:
+      - "4445:80"
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - staging-network
+    environment:
+      - STAGING=true
+
+networks:
+  staging-network:
+    driver: bridge
