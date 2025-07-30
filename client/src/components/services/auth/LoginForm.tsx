@@ -273,6 +273,7 @@ function LoginForm() {
                 Créer un compte
               </a>
             </motion.div>
+            <h1>Staging</h1>
           </CardContent>
         </Card>
       </motion.div>
