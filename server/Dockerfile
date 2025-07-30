@@ -13,14 +13,8 @@ RUN bun install
 # Copier le code source
 COPY . .
 
-# Builder l'application
-RUN bun run build
-
-# Installer les dépendances de production dans le dossier build
-RUN cd build && bun install --production
-
 # Exposer le port
 EXPOSE 3333
 
-# Commande de démarrage
-CMD ["node", "build/bin/server.js"]
+# Utiliser le mode développement (plus stable)
+CMD ["bun", "run", "dev"]
