@@ -26,10 +26,21 @@ router.get('/debug', async ({ response }) => {
   try {
     const publicDir = path.join(process.cwd(), 'public')
     const files = fs.readdirSync(publicDir)
+
+    // Check assets directory specifically
+    const assetsDir = path.join(publicDir, 'assets')
+    let assetsFiles = []
+    try {
+      assetsFiles = fs.readdirSync(assetsDir)
+    } catch (e) {
+      assetsFiles = ['assets directory not found']
+    }
+
     return response.json({
       cwd: process.cwd(),
       publicDir,
-      files: files.slice(0, 10) // First 10 files
+      files: files.slice(0, 10), // First 10 files
+      assetsFiles: assetsFiles.slice(0, 10)
     })
   } catch (error) {
     return response.json({ error: error.message })
