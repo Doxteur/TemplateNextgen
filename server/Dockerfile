@@ -1,20 +1,28 @@
-# Dockerfile pour le serveur AdonisJS
-FROM oven/bun:1 as base
+FROM oven/bun:1 AS builder
 
-# Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers de dépendances
-COPY package.json ./
-
-# Installer les dépendances
+COPY package*.json ./
 RUN bun install
 
-# Copier le code source
 COPY . .
+COPY .env.example .env.example
 
-# Exposer le port
+# Si .env n'existe pas, on le crée à partir de .env.example
+RUN [ -f .env ] || cp .env.example .env
+
+RUN bun run build
+RUN cp .env build/.env
+
+WORKDIR /app/build
+RUN bun install --production
+
+FROM oven/bun:1
+
+WORKDIR /app
+
+COPY --from=builder /app/build ./
+
 EXPOSE 3333
 
-# Utiliser le mode développement (plus stable)
-CMD ["node", "ace", "serve", "--host", "0.0.0.0"]
+CMD ["node", "bin/server.js"]
