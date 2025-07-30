@@ -36,6 +36,20 @@ router.get('/debug', async ({ response }) => {
   }
 })
 
+// Serve static files with correct MIME types
+router.get('/assets/*', async ({ params, response }) => {
+  const filePath = `public/assets/${params['*']}`
+  const ext = filePath.split('.').pop()
+
+  let contentType = 'text/plain'
+  if (ext === 'js') contentType = 'application/javascript'
+  else if (ext === 'css') contentType = 'text/css'
+  else if (ext === 'html') contentType = 'text/html'
+
+  response.header('Content-Type', contentType)
+  return response.download(filePath)
+})
+
 // Serve React app for all non-API routes
 router.get('*', async ({ response }) => {
   return response.download('public/index.html')
