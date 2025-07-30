@@ -15,5 +15,13 @@ router
     router.post('/auth/login', [AuthController, 'login'])
 
     router.post('/auth/register', [AuthController, 'register'])
+
+    // health check
+    router.get('/health', () => {
+      return {
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+      }
+    })
   })
   .prefix('/api')
