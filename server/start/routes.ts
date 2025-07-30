@@ -24,4 +24,3 @@ router
       }
     })
   })
-  .prefix('/api')
