@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3333
 
 # Utiliser le mode développement (plus stable)
-CMD ["bun", "run", "dev"]
+CMD ["node", "ace", "serve", "--host", "0.0.0.0"]
