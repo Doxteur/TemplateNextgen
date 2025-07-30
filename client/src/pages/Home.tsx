@@ -1,14 +1,13 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Shield, 
-  Zap, 
-  Code, 
-  Database, 
-  Palette, 
+import {
+  Shield,
+  Zap,
+  Code,
+  Database,
+  Palette,
   ArrowRight,
   Github,
   Play,
@@ -56,7 +55,7 @@ function Home() {
 
   const benefits = [
     "Authentification JWT complète",
-    "Routes protégées automatiques", 
+    "Routes protégées automatiques",
     "Base de données avec Lucid ORM",
     "Interface moderne et responsive",
     "Performance optimisée avec Bun",
@@ -84,16 +83,16 @@ function Home() {
               <Sparkles className="mr-2 h-4 w-4" />
               Stack Full-Stack Moderne
             </Badge>
-            
+
             <h1 className="text-5xl font-bold tracking-tight text-foreground sm:text-7xl mb-6">
               RABV
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/80 to-accent">
                 Template
               </span>
             </h1>
-            
+
             <p className="mt-6 text-xl leading-8 text-muted-foreground max-w-3xl mx-auto">
-              Une stack full-stack TypeScript moderne avec authentification JWT, 
+              Une stack full-stack TypeScript moderne avec authentification JWT,
               utilisant <strong className="text-primary">R</strong>eact, <strong className="text-primary">A</strong>donisJS, <strong className="text-primary">B</strong>un et <strong className="text-primary">V</strong>ite.
             </p>
           </motion.div>
@@ -239,7 +238,7 @@ function Home() {
               {/* Decorative elements */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
-              
+
               <CardHeader className="relative z-10">
                 <CardTitle className="text-4xl font-bold mb-4">
                   Prêt à démarrer ?

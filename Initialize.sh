@@ -138,7 +138,7 @@ create_mysql_bot() {
     print_message "Création du bot MySQL pour la base de données '$db_name'..."
 
     # Construire les variables d'environnement JSON (format MySQL attendu par l'API)
-    env_vars="{\"MYSQL_PORT\":\"3306\",\"MYSQL_USER\":\"$db_user\",\"MYSQL_PASSWORD\":\"$db_password\",\"MYSQL_DATABASE\":\"$db_name\",\"MYSQL_ROOT_PASSWORD\":\"$db_password\"}"
+    env_vars="{\"MYSQL_PORT\":\"$db_port\",\"MYSQL_USER\":\"$db_user\",\"MYSQL_PASSWORD\":\"$db_password\",\"MYSQL_DATABASE\":\"$db_name\",\"MYSQL_ROOT_PASSWORD\":\"$db_password\"}"
 
     # Appel curl pour créer le bot avec plus de détails
     print_message "Envoi de la requête de création du bot..."
@@ -239,7 +239,8 @@ setup_environment() {
     local db_name=$1
     local db_user=$2
     local db_password=$3
-    local bot_id=$4
+    local db_port=$4
+    local bot_id=$5
 
     print_message "Configuration des variables d'environnement..."
 
@@ -269,9 +270,9 @@ setup_environment() {
     fi
 
     if grep -q "DB_PORT" .env; then
-        sed -i.bak "s/DB_PORT=.*/DB_PORT=3306/" .env
+        sed -i.bak "s/DB_PORT=.*/DB_PORT=$db_port/" .env
     else
-        echo "DB_PORT=3306" >> .env
+        echo "DB_PORT=$db_port" >> .env
     fi
 
     if grep -q "BOT_ID" .env; then
@@ -286,6 +287,62 @@ setup_environment() {
     fi
 
     print_message "Variables d'environnement configurées"
+}
+
+# Fonction pour configurer le fichier .env du serveur
+setup_server_env() {
+    local db_name=$1
+    local db_user=$2
+    local db_password=$3
+    local db_port=$4
+
+    print_message "Configuration du fichier .env du serveur..."
+
+    # Vérifier si le fichier .env.example existe dans le dossier server
+    if [ ! -f "server/.env.example" ]; then
+        print_error "Le fichier server/.env.example n'existe pas"
+        print_error "Veuillez créer ce fichier avec les variables d'environnement de base"
+        return 1
+    fi
+
+    # Copier .env.example vers .env dans le dossier server
+    cp "server/.env.example" "server/.env"
+    print_message "Fichier .env créé à partir de .env.example"
+
+    # Configurer les variables de base de données dans le fichier .env du serveur
+    if grep -q "DB_HOST" server/.env; then
+        sed -i.bak "s/DB_HOST=.*/DB_HOST=spleendb.fr/" server/.env
+    fi
+
+    if grep -q "DB_PORT" server/.env; then
+        sed -i.bak "s/DB_PORT=.*/DB_PORT=$db_port/" server/.env
+    fi
+
+    if grep -q "DB_USER" server/.env; then
+        sed -i.bak "s/DB_USER=.*/DB_USER=$db_user/" server/.env
+    fi
+
+    if grep -q "DB_PASSWORD" server/.env; then
+        sed -i.bak "s/DB_PASSWORD=.*/DB_PASSWORD=$db_password/" server/.env
+    fi
+
+    if grep -q "DB_DATABASE" server/.env; then
+        sed -i.bak "s/DB_DATABASE=.*/DB_DATABASE=$db_name/" server/.env
+    fi
+
+    # Nettoyer le fichier de sauvegarde
+    if [ -f "server/.env.bak" ]; then
+        rm "server/.env.bak"
+    fi
+
+    print_message "Fichier .env du serveur configuré avec succès"
+}
+
+# Fonction pour générer un port aléatoire
+generate_random_port() {
+    # Générer un port aléatoire entre 10000 et 65535
+    # Ces ports sont généralement libres et non réservés
+    echo $((10000 + RANDOM % 55535))
 }
 
 # Fonction pour générer un mot de passe sécurisé
@@ -322,6 +379,10 @@ main() {
     # Générer un mot de passe sécurisé
     db_password=$(generate_password)
     print_message "Mot de passe généré automatiquement: $db_password"
+
+    # Générer un port aléatoire
+    db_port=$(generate_random_port)
+    print_message "Port généré automatiquement: $db_port"
 
     # URL de l'API SpleenDB (avec HTTPS et gestion des redirections)
     api_url="https://spleendb.fr/api"
@@ -374,8 +435,13 @@ main() {
 
     # Configurer les variables d'environnement
     print_message "Étape 3/3: Configuration des variables d'environnement..."
-    setup_environment "$db_name" "$db_user" "$db_password" "$bot_id"
+    setup_environment "$db_name" "$db_user" "$db_password" "$db_port" "$bot_id"
     print_message "✅ Variables d'environnement configurées"
+
+    # Configurer le fichier .env du serveur
+    print_message "Étape 4/4: Configuration du fichier .env du serveur..."
+    setup_server_env "$db_name" "$db_user" "$db_password" "$db_port"
+    print_message "✅ Fichier .env du serveur configuré"
 
     print_message "Initialisation terminée avec succès!"
     echo ""
@@ -383,10 +449,11 @@ main() {
     echo -e "  - Nom de la base de données: $db_name"
     echo -e "  - Utilisateur MySQL: $db_user"
     echo -e "  - Mot de passe MySQL: $db_password"
-    echo -e "  - Port MySQL: 3306"
+    echo -e "  - Port MySQL: $db_port"
     echo -e "  - URL de l'API: $api_url"
     echo -e "  - ID du bot créé: $bot_id"
     echo -e "  - Variables d'environnement configurées dans .env"
+    echo -e "  - Fichier .env du serveur configuré dans server/.env"
     echo ""
     echo -e "${YELLOW}Commandes utiles pour gérer le bot:${NC}"
     echo -e "  - Démarrer le bot: curl -X POST $api_url/bots/$bot_id/start -H \"Authorization: Bearer $token\""
